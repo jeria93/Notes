@@ -1,0 +1,96 @@
+useDotenv: true
+
+service: Notes
+frameworkVersion: "3"
+
+# --- Provider (AWS + runtime + stage/region) -------------------------------
+provider:
+  name: aws
+  runtime: nodejs20.x
+  stage: ${opt:stage, 'dev'}
+  region: ${env:AWS_REGION, 'eu-north-1'}
+  iam:
+    role: ${env:IAM_ROLE}
+
+  # Environment variables available to all Lambda functions at runtime
+  environment:
+    STAGE: ${sls:stage}
+    USERS_TABLE: ${env:USERS_TABLE, 'accounts'}
+    NOTES_TABLE: ${env:NOTES_TABLE, 'notes'}
+    JWT_SECRET_ID: ${env:JWT_SECRET_ID, "notes-api/${sls:stage}/JWT_SECRET"}
+    JWT_EXPIRES_IN: ${env:JWT_EXPIRES_IN, '1h'}
+
+# --- Functions (HTTP endpoints) --------------------------------------------
+functions:
+  signup:
+    handler: functions/signup.handler
+    events:
+      - httpApi:
+          path: /api/user/signup
+          method: POST
+
+  login:
+    handler: functions/login.handler
+    events:
+      - httpApi:
+          path: /api/user/login
+          method: POST
+
+  getNotes:
+    handler: notes/getNote.handler
+    events:
+      - httpApi:
+          path: /api/notes
+          method: GET
+
+  createNote:
+    handler: notes/createNote.handler
+    events:
+      - httpApi:
+          path: /api/notes
+          method: POST
+
+  updateNote:
+    handler: notes/updateNote.handler
+    events:
+      - httpApi:
+          path: /api/notes
+          method: PUT
+
+  deleteNote:
+    handler: notes/deleteNote.handler
+    events:
+      - httpApi:
+          path: /api/notes
+          method: DELETE
+
+# --- Resources (DynamoDB tables) -------------------------------------------
+resources:
+  Resources:
+    AccountsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${env:USERS_TABLE, 'accounts'}
+        AttributeDefinitions:
+          - AttributeName: username
+            AttributeType: S
+        KeySchema:
+          - AttributeName: username
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+
+    NotesTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${env:NOTES_TABLE, 'notes'}
+        AttributeDefinitions:
+          - AttributeName: userId
+            AttributeType: S
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: userId
+            KeyType: HASH
+          - AttributeName: id
+            KeyType: RANGE
+        BillingMode: PAY_PER_REQUEST

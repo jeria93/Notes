@@ -1,0 +1,17 @@
+# macOS
+.DS_Store
+
+# Node
+node_modules/
+npm-debug.log*
+
+# Serverless build
+.serverless/
+
+# Env-files
+.env
+.env.*
+!.env.example
+
+# VS Code
+.vscode/
