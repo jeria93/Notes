@@ -12,19 +12,21 @@ module.exports.handler = async (event) => {
     const username = String(body.username || "").trim().toLowerCase();
     const password = String(body.password || "");
 
+    // Basic validation: both fields are required
     if (!username || !password) {
       return sendResponse(400, {
         error: "username and password are required",
       });
     }
 
+    // Extra validation: password must be long enough
     if (password.length < 6) {
       return sendResponse(400, {
         error: "password must be at least 6 characters",
       });
     }
 
-    // check if username already exists
+    // Check in DynamoDB if this username already exists
     const existing = await ddb.send(
       new GetCommand({
         TableName: USERS_TABLE,
@@ -42,6 +44,7 @@ module.exports.handler = async (event) => {
     const userId = randomUUID();
     const now = new Date().toISOString();
 
+    // Save the new user in DynamoDB
     await ddb.send(
       new PutCommand({
         TableName: USERS_TABLE,
