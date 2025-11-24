@@ -44,6 +44,8 @@ async function requireAuthFromHeader(headers = {}) {
   }
 }
 
+// Middy-middleware som körs före handlern, verifierar JWT från headers
+// och lägger den inloggade användaren på request.event.user
 const authMiddleware = () => ({
   before: async (request) => {
     const user = await requireAuthFromHeader(request.event.headers);
