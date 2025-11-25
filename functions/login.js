@@ -55,7 +55,7 @@ module.exports.handler = async (event) => {
         username: user.username,
       },
       jwtSecret,
-      { expiresIn }
+      { expiresIn: expiresIn }
     );
 
     // Successful login == return token and basic user info
