@@ -16,13 +16,13 @@ async function baseHandler(event) {
     // Input validation: id is required
     if (!id) {
       return sendResponse(400, {
-        error: "id is required to delete a note",
+        error: "id is required to restore a note",
       });
     }
 
     const now = new Date().toISOString();
 
-    // Mark the note as deleted instead of removing it
+    // Remove deletedAt to "undelete" the note
     const result = await ddb.send(
       new UpdateCommand({
         TableName: NOTES_TABLE,
@@ -30,25 +30,30 @@ async function baseHandler(event) {
           userId: user.userId,
           id,
         },
-        UpdateExpression: "SET deletedAt = :deletedAt",
-        ExpressionAttributeValues: {":deletedAt": now,},
-        // Only soft delete if note exists and is not already deleted
-        ConditionExpression:"attribute_exists(userId) AND attribute_exists(id) AND attribute_not_exists(deletedAt)",
+        // Remove deletedAt and update modifiedAt
+        UpdateExpression: "REMOVE deletedAt SET modifiedAt = :modifiedAt",
+        ExpressionAttributeValues: {
+          ":modifiedAt": now,
+        },
+        // Only restore if the note exists and is currently soft-deleted
+        ConditionExpression:"attribute_exists(userId) AND attribute_exists(id) AND attribute_exists(deletedAt)",
         ReturnValues: "ALL_NEW",
       })
     );
 
-    const deletedNote = result.Attributes;
+    const restoredNote = result.Attributes;
 
     return sendResponse(200, {
-      message: "note soft-deleted",
-      note: deletedNote,
+      message: "note restored",
+      note: restoredNote,
     });
   } catch (err) {
-    console.error("deleteNote error", err);
+    console.error("restoreNote error", err);
 
     if (err.name === "ConditionalCheckFailedException") {
-      return sendResponse(404, { error: "note not found" });
+      return sendResponse(404, {
+        error: "note not found or not deleted",
+      });
     }
 
     return sendResponse(500, { error: "internal error" });
