@@ -1,72 +1,77 @@
-<!--
-title: 'AWS NodeJS Example'
-description: 'This template demonstrates how to deploy a NodeJS function running on AWS Lambda using the traditional Serverless Framework.'
-layout: Doc
-framework: v3
-platform: AWS
-language: nodeJS
-priority: 1
-authorLink: 'https://github.com/serverless'
-authorName: 'Serverless, inc.'
-authorAvatar: 'https://avatars1.githubusercontent.com/u/13742415?s=200&v=4'
--->
+# Notes API (Serverless + AWS)
 
+Small practice project using the Serverless Framework, AWS Lambda and DynamoDB to build a simple notes API with JWT-based authentication.
 
-# Serverless Framework AWS NodeJS Example
+## Tech stack
 
-This template demonstrates how to deploy a NodeJS function running on AWS Lambda using the traditional Serverless Framework. The deployed function does not include any event definitions as well as any kind of persistence (database). For more advanced configurations check out the [examples repo](https://github.com/serverless/examples/) which includes integrations with SQS, DynamoDB or examples of functions that are triggered in `cron`-like manner. For details about configuration of specific `events`, please refer to our [documentation](https://www.serverless.com/framework/docs/providers/aws/events/).
+- Node.js 20
+- Serverless Framework v3
+- AWS Lambda + API Gateway
+- DynamoDB (notes storage)
+- AWS Secrets Manager (JWT secret)
+- Insomnia (API client, config included)
 
-## Usage
+---
 
-### Deployment
+## Getting started
 
-In order to deploy the example, you need to run the following command:
+### Prerequisites
 
-```
-$ serverless deploy
-```
+- Node.js 20+
+- Serverless Framework v3 installed globally:
 
-After running deploy, you should see output similar to:
+  ```bash
+  npm install -g serverless
+  ```
 
-```bash
-Deploying aws-node-project to stage dev (us-east-1)
+- AWS credentials configured with access to:
+  - Lambda, API Gateway, DynamoDB, Secrets Manager
 
-✔ Service deployed to stack aws-node-project-dev (112s)
-
-functions:
-  hello: aws-node-project-dev-hello (1.5 kB)
-```
-
-### Invocation
-
-After successful deployment, you can invoke the deployed function by using the following command:
+### Install dependencies
 
 ```bash
-serverless invoke --function hello
+npm install
 ```
 
-Which should result in response similar to the following:
-
-```json
-{
-    "statusCode": 200,
-    "body": "{\n  \"message\": \"Go Serverless v3.0! Your function executed successfully!\",\n  \"input\": {}\n}"
-}
-```
-
-### Local development
-
-You can invoke your function locally by using the following command:
+### Deploy
 
 ```bash
-serverless invoke local --function hello
+npx serverless deploy --stage dev
 ```
 
-Which should result in response similar to the following:
+Serverless will print all available endpoints after deploy.
 
+---
+
+## Endpoints (overview)
+
+All `/api/notes` endpoints require:
+
+```http
+Authorization: Bearer <token>
 ```
-{
-    "statusCode": 200,
-    "body": "{\n  \"message\": \"Go Serverless v3.0! Your function executed successfully!\",\n  \"input\": \"\"\n}"
-}
-```
+
+### Auth
+
+- `POST /api/user/signup` – create a new user
+- `POST /api/user/login` – log in and get a JWT
+- `GET  /api/whoami` – return info about the authenticated user
+
+### Notes
+
+- `GET    /api/notes` – list notes for the current user
+- `POST   /api/notes` – create a note
+- `PUT    /api/notes` – update a note
+- `DELETE /api/notes` – soft delete a note
+- `POST   /api/notes/restore` – restore a soft deleted note
+- `DELETE /api/notes/permanent-delete` – permanently delete a note
+
+---
+
+## Insomnia collection
+
+An Insomnia config is included:
+
+- `insomnia/notes-api-insomnia.yaml`
+
+Import it in Insomnia and update the bearer token after logging in.
