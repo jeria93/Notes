@@ -1,0 +1,324 @@
+type: collection.insomnia.rest/5.0
+schema_version: "5.1"
+name: Notes Collection
+meta:
+  id: wrk_cde3f8378a1d42a9ab9691ccdb315c80
+  created: 1763929765554
+  modified: 1763929765554
+  description: ""
+collection:
+  - url: https://idqy4phq6l.execute-api.eu-north-1.amazonaws.com/api/whoami
+    name: WHOAMI
+    meta:
+      id: req_c1dfc96bda984dcea52c1c04677d62fd
+      created: 1763929995282
+      modified: 1764242861547
+      isPrivate: false
+      description: ""
+      sortKey: -1763929995282
+    method: GET
+    headers:
+      - name: User-Agent
+        value: insomnia/12.1.0
+        description: ""
+        disabled: false
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+
+  - url: https://idqy4phq6l.execute-api.eu-north-1.amazonaws.com/api/user/signup
+    name: CREATE User
+    meta:
+      id: req_2078e30291e9499aa619e572c30e61a3
+      created: 1763982642513
+      modified: 1764193267646
+      isPrivate: false
+      description: ""
+      sortKey: -1763982642513
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "username": "Nicholas",
+          "password": "example123"
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/12.1.0
+        description: ""
+        disabled: false
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+
+  - url: https://idqy4phq6l.execute-api.eu-north-1.amazonaws.com/api/user/login
+    name: LOGIN User
+    meta:
+      id: req_75610d4c29e6401b954d8c59bae2068f
+      created: 1763994459295
+      modified: 1764192856481
+      isPrivate: false
+      description: ""
+      sortKey: -1763994459295
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "username": "nicholas",
+          "password": "example123"
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/12.1.0
+        description: ""
+        disabled: false
+    authentication:
+      type: bearer
+      token: ""
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+
+  - url: https://idqy4phq6l.execute-api.eu-north-1.amazonaws.com/api/notes
+    name: CREATE Note
+    meta:
+      id: req_f49a5f9bb9d74c7ba15fbacc3919089f
+      created: 1764099258447
+      modified: 1764193994992
+      isPrivate: false
+      description: ""
+      sortKey: -1764099258447
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "title": "Note nr 20",
+          "text": "This test"
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/12.1.0
+        description: ""
+        disabled: false
+    authentication:
+      type: bearer
+      token: ""
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+
+  - url: https://idqy4phq6l.execute-api.eu-north-1.amazonaws.com/api/notes
+    name: GET Notes
+    meta:
+      id: req_37e69991a7294ba39a7d4896d5021569
+      created: 1764100717684
+      modified: 1764193037839
+      isPrivate: false
+      description: ""
+      sortKey: -1764100717684
+    method: GET
+    headers:
+      - name: User-Agent
+        value: insomnia/12.1.0
+        description: ""
+        disabled: false
+    authentication:
+      type: bearer
+      token: ""
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+
+  - url: https://idqy4phq6l.execute-api.eu-north-1.amazonaws.com/api/notes
+    name: DELETE Note (soft)
+    meta:
+      id: req_ce2399a00c9344deaffef577eb3dc151
+      created: 1764104353162
+      modified: 1764194032292
+      isPrivate: false
+      description: ""
+      sortKey: -1764104353162
+    method: DELETE
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "id": "193d5537-0e93-4a62-a433-19f6bb216ebf"
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/12.1.0
+        description: ""
+        disabled: false
+    authentication:
+      type: bearer
+      token: ""
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+
+  - url: https://idqy4phq6l.execute-api.eu-north-1.amazonaws.com/api/notes/permanent-delete
+    name: DELETE Note (hard)
+    meta:
+      id: req_abcefbae19ad4d0988c660ce30070d2a
+      created: 1764193423996
+      modified: 1764193566412
+      isPrivate: false
+      description: ""
+      sortKey: -1764193423996
+    method: DELETE
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "id": "278cdea7-0cfb-4260-81dc-bd1415a138be"
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/12.1.0
+        description: ""
+        disabled: false
+    authentication:
+      type: bearer
+      token: ""
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+
+  - url: https://idqy4phq6l.execute-api.eu-north-1.amazonaws.com/api/notes/restore
+    name: RESTORE Note
+    meta:
+      id: req_401bf95909144b76b9e23749f81640fe
+      created: 1764193791769
+      modified: 1764194202927
+      isPrivate: false
+      description: ""
+      sortKey: -1764193791769
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "id": "193d5537-0e93-4a62-a433-19f6bb216ebf"
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/12.1.0
+        description: ""
+        disabled: false
+    authentication:
+      type: bearer
+      token: ""
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+
+  - url: https://idqy4phq6l.execute-api.eu-north-1.amazonaws.com/api/notes
+    name: UPDATE Note
+    meta:
+      id: req_a0ccd5db77964a9486fe8e3b912ab3c8
+      created: 1764194436877
+      modified: 1764242756652
+      isPrivate: false
+      description: ""
+      sortKey: -1764194436877
+    method: PUT
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "id": "bc936f27-a748-4c25-83aa-8ea97ed4b1df",
+          "title": "New Banana",
+          "text": "Bananas comes in different sizes"
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/12.1.0
+        description: ""
+        disabled: false
+    authentication:
+      type: bearer
+      token: ""
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+
+cookieJar:
+  name: Default Jar
+  meta:
+    id: jar_630911155e334b9309163473ce0e9e443faae23e
+    created: 1763929765556
+    modified: 1763929765556
+
+environments:
+  name: Base Environment
+  meta:
+    id: env_630911155e334b9309163473ce0e9e443faae23e
+    created: 1763929765555
+    modified: 1764099781038
+    isPrivate: false
+  data:
+    baseUrl: https://idqy4phq6l.execute-api.eu-north-1.amazonaws.com
+    "": ""

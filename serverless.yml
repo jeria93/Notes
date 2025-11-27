@@ -35,6 +35,7 @@ functions:
           path: /api/user/login
           method: POST
 
+  # GET /api/notes - list non-deleted notes for logged-in user
   getNotes:
     handler: notes/getNote.handler
     events:
@@ -42,6 +43,7 @@ functions:
           path: /api/notes
           method: GET
 
+  # POST /api/notes - create note
   createNote:
     handler: notes/createNote.handler
     events:
@@ -49,6 +51,7 @@ functions:
           path: /api/notes
           method: POST
 
+  # PUT /api/notes - update note
   updateNote:
     handler: notes/updateNote.handler
     events:
@@ -56,11 +59,28 @@ functions:
           path: /api/notes
           method: PUT
 
+  # DELETE /api/notes - soft delete (sätter deletedAt)
   deleteNote:
     handler: notes/deleteNote.handler
     events:
       - httpApi:
           path: /api/notes
+          method: DELETE
+
+  # POST /api/notes/restore - ta bort deletedAt och återställ anteckning
+  restoreNote:
+    handler: notes/restoreNote.handler
+    events:
+      - httpApi:
+          path: /api/notes/restore
+          method: POST
+
+  # DELETE /api/notes/permanent-delete - ta bort raden helt från tabellen
+  permanentDeleteNote:
+    handler: notes/permanentDeleteNote.handler
+    events:
+      - httpApi:
+          path: /api/notes/permanent-delete
           method: DELETE
 
 resources:
