@@ -1,27 +1,26 @@
 useDotenv: true
-
 service: Notes
-frameworkVersion: "3"
 
-# --- Provider (AWS + runtime + stage/region) -------------------------------
 provider:
   name: aws
   runtime: nodejs20.x
-  stage: ${opt:stage, 'dev'}
-  region: ${env:AWS_REGION, 'eu-north-1'}
+  region: eu-north-1
   iam:
     role: ${env:IAM_ROLE}
-
-  # Environment variables available to all Lambda functions at runtime
   environment:
-    STAGE: ${sls:stage}
-    USERS_TABLE: ${env:USERS_TABLE, 'accounts'}
-    NOTES_TABLE: ${env:NOTES_TABLE, 'notes'}
-    JWT_SECRET_ID: ${env:JWT_SECRET_ID, "notes-api/${sls:stage}/JWT_SECRET"}
-    JWT_EXPIRES_IN: ${env:JWT_EXPIRES_IN, '1h'}
+    USERS_TABLE: notes-accounts
+    NOTES_TABLE: notes-notes
+    JWT_SECRET_ID: notes-api/${sls:stage}/JWT_SECRET
+    JWT_EXPIRES_IN: 1h
 
-# --- Functions (HTTP endpoints) --------------------------------------------
 functions:
+  whoami:
+    handler: functions/whoami.handler
+    events:
+      - httpApi:
+          path: /api/whoami
+          method: GET
+
   signup:
     handler: functions/signup.handler
     events:
@@ -36,6 +35,7 @@ functions:
           path: /api/user/login
           method: POST
 
+  # GET /api/notes - list non-deleted notes for logged-in user
   getNotes:
     handler: notes/getNote.handler
     events:
@@ -43,6 +43,7 @@ functions:
           path: /api/notes
           method: GET
 
+  # POST /api/notes - create note
   createNote:
     handler: notes/createNote.handler
     events:
@@ -50,6 +51,7 @@ functions:
           path: /api/notes
           method: POST
 
+  # PUT /api/notes - update note
   updateNote:
     handler: notes/updateNote.handler
     events:
@@ -57,6 +59,7 @@ functions:
           path: /api/notes
           method: PUT
 
+  # DELETE /api/notes - soft delete (sätter deletedAt)
   deleteNote:
     handler: notes/deleteNote.handler
     events:
@@ -64,13 +67,28 @@ functions:
           path: /api/notes
           method: DELETE
 
-# --- Resources (DynamoDB tables) -------------------------------------------
+  # POST /api/notes/restore - ta bort deletedAt och återställ anteckning
+  restoreNote:
+    handler: notes/restoreNote.handler
+    events:
+      - httpApi:
+          path: /api/notes/restore
+          method: POST
+
+  # DELETE /api/notes/permanent-delete - ta bort raden helt från tabellen
+  permanentDeleteNote:
+    handler: notes/permanentDeleteNote.handler
+    events:
+      - httpApi:
+          path: /api/notes/permanent-delete
+          method: DELETE
+
 resources:
   Resources:
-    AccountsTable:
+    UsersTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: ${env:USERS_TABLE, 'accounts'}
+        TableName: notes-accounts
         AttributeDefinitions:
           - AttributeName: username
             AttributeType: S
@@ -82,7 +100,7 @@ resources:
     NotesTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: ${env:NOTES_TABLE, 'notes'}
+        TableName: notes-notes
         AttributeDefinitions:
           - AttributeName: userId
             AttributeType: S
