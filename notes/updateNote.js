@@ -8,7 +8,7 @@ const NOTES_TABLE = process.env.NOTES_TABLE || "notes-notes";
 
 async function baseHandler(event) {
   try {
-    const user = event.user; // Logged-in user (set by authMiddleware)
+    const user = event.user;
 
     const body = event.body ? JSON.parse(event.body) : {};
     const id = String(body.id || "").trim();
@@ -47,7 +47,13 @@ async function baseHandler(event) {
           userId: user.userId,
           id,
         },
-        UpdateExpression:"SET title = :title, text = :text, modifiedAt = :modifiedAt",
+        UpdateExpression:"SET #title = :title, #text = :text, #modifiedAt = :modifiedAt",
+        ExpressionAttributeNames: {
+          "#title": "title",
+          "#text": "text",
+          "#modifiedAt": "modifiedAt",
+        },
+        // Actual values we want to write
         ExpressionAttributeValues: {
           ":title": title,
           ":text": text,
@@ -59,6 +65,7 @@ async function baseHandler(event) {
     );
 
     const updatedNote = result.Attributes;
+
     return sendResponse(200, {
       message: "note updated",
       note: updatedNote,
@@ -67,10 +74,13 @@ async function baseHandler(event) {
     console.error("updateNote error", err);
 
     if (err.name === "ConditionalCheckFailedException") {
+      // Note did not exist for this user/id
       return sendResponse(404, { error: "note not found" });
     }
+
     return sendResponse(500, { error: "internal error" });
   }
 }
 
+// Protect handler with auth middleware
 module.exports.handler = middy(baseHandler).use(authMiddleware());
